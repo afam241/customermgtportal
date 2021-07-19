@@ -124,7 +124,7 @@ public class CustomerDaoImpl implements CustomerDao {
         OracleDataSource ds = null;
         try {
             ds = new OracleDataSource();
-            ds.setURL("jdbc:oracle:thin:@//localhost:1521/xe");
+            ds.setURL("jdbc:oracle:thin:@//localhost:1521/xe");  //connection URL info obtained from database schema properties
             ds.setUser("system");
             ds.setPassword("afam");
         }catch (Exception e){
