@@ -79,8 +79,8 @@ public class CustomerDaoImpl implements CustomerDao {
         EditCustomerResponse response = new EditCustomerResponse();
 
         try {
-            //connection = dataSource.getConnection();
-            connection = cardOracleDataSource().getConnection();
+            connection = dataSource.getConnection();
+            //connection = cardOracleDataSource().getConnection();
             String query = "call CUS_MGT_PORTAL.proc_edit_customer(?,?,?,?,?,?,?)";
             callableStatement = connection.prepareCall(query);
             callableStatement.setString(1,editCustomerRequestModel.getCustomerName());
@@ -115,11 +115,11 @@ public class CustomerDaoImpl implements CustomerDao {
             }
         }
 
-
+        logger.info("Response code::: " + response);
         return response;
     }
 
-
+/*
     public static DataSource cardOracleDataSource(){
         OracleDataSource ds = null;
         try {
@@ -133,18 +133,21 @@ public class CustomerDaoImpl implements CustomerDao {
         return ds;
     }
 
-    /*
-
+*//*
         //Test for editing customer
     public static void main(String[] args) {
         CustomerDaoImpl customerDao = new CustomerDaoImpl();
-        SaveCustomerRequestModel edit2 = new SaveCustomerRequestModel("Akeem","6r5dcf","543edx","87ygtf",4556.23);
+        SaveCustomerRequestModel edit2 = new SaveCustomerRequestModel("Akeemii","6r5dcf","543edx","87ygtf",4556.23);
 
         EditCustomerResponse edit = customerDao.editCustomer(edit2);
         System.out.println("Response::: " + edit.getResponseCode() + " Message::: " + edit.getResponseMessage());
     }
 
-*/
+    *//*
+
+
+
+    */
 }
 
 
