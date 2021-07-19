@@ -7,6 +7,14 @@ public class SaveCustomerRequestModel {
     private String department;
     private double netWorth;
 
+    public SaveCustomerRequestModel(String customerName, String password, String address, String department, double netWorth) {
+        this.customerName = customerName;
+        this.password = password;
+        this.address = address;
+        this.department = department;
+        this.netWorth = netWorth;
+    }
+
     public String getCustomerName() {
         return customerName;
     }

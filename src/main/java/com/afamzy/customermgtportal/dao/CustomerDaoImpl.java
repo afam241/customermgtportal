@@ -2,6 +2,7 @@ package com.afamzy.customermgtportal.dao;
 
 
 import com.afamzy.customermgtportal.model.*;
+import oracle.jdbc.pool.OracleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +79,8 @@ public class CustomerDaoImpl implements CustomerDao {
         EditCustomerResponse response = new EditCustomerResponse();
 
         try {
-            connection = dataSource.getConnection();
+            //connection = dataSource.getConnection();
+            connection = cardOracleDataSource().getConnection();
             String query = "call CUS_MGT_PORTAL.proc_edit_customer(?,?,?,?,?,?,?)";
             callableStatement = connection.prepareCall(query);
             callableStatement.setString(1,editCustomerRequestModel.getCustomerName());
@@ -118,6 +120,31 @@ public class CustomerDaoImpl implements CustomerDao {
     }
 
 
+    public static DataSource cardOracleDataSource(){
+        OracleDataSource ds = null;
+        try {
+            ds = new OracleDataSource();
+            ds.setURL("jdbc:oracle:thin:@//localhost:1521/xe");
+            ds.setUser("system");
+            ds.setPassword("afam");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return ds;
+    }
+
+    /*
+
+        //Test for editing customer
+    public static void main(String[] args) {
+        CustomerDaoImpl customerDao = new CustomerDaoImpl();
+        SaveCustomerRequestModel edit2 = new SaveCustomerRequestModel("Akeem","6r5dcf","543edx","87ygtf",4556.23);
+
+        EditCustomerResponse edit = customerDao.editCustomer(edit2);
+        System.out.println("Response::: " + edit.getResponseCode() + " Message::: " + edit.getResponseMessage());
+    }
+
+*/
 }
 
 
