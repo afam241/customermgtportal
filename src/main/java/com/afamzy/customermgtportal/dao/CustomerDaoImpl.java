@@ -69,6 +69,53 @@ public class CustomerDaoImpl implements CustomerDao {
         return saveCustomerResponse;
     }
 
+    @Override
+    public EditCustomerResponse editCustomer(SaveCustomerRequestModel editCustomerRequestModel) {
+        logger.info("Edit Customer Request::: " + editCustomerRequestModel);
+
+        Connection connection = null;
+        CallableStatement callableStatement = null;
+        EditCustomerResponse response = new EditCustomerResponse();
+
+        try {
+            connection = dataSource.getConnection();
+            String query = "call CUS_MGT_PORTAL.proc_edit_customer(?,?,?,?,?,?,?)";
+            callableStatement = connection.prepareCall(query);
+            callableStatement.setString(1,editCustomerRequestModel.getCustomerName());
+            callableStatement.setString(2,editCustomerRequestModel.getPassword());
+            callableStatement.setString(3,editCustomerRequestModel.getAddress());
+            callableStatement.setString(4,editCustomerRequestModel.getDepartment());
+            callableStatement.setDouble(5,editCustomerRequestModel.getNetWorth());
+            callableStatement.registerOutParameter(6,Types.VARCHAR);
+            callableStatement.registerOutParameter(7,Types.VARCHAR);
+            callableStatement.execute();
+
+            response.setResponseCode(callableStatement.getString(6));
+            response.setResponseMessage(callableStatement.getString(7));
+
+        }catch (Exception exception){
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+        }finally {
+            if(connection != null){
+                try {
+                    connection.close();
+                }catch (Exception exception){
+                    exception.printStackTrace();
+                }
+            }
+            if (callableStatement != null){
+                try {
+                    callableStatement.close();
+                }catch (Exception exception){
+                    exception.printStackTrace();
+                }
+            }
+        }
+
+
+        return response;
+    }
 
 
 }

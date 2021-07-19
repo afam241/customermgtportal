@@ -11,6 +11,6 @@ public interface CustomerDao {
     */
 
     SaveCustomerResponse saveCustomer(SaveCustomerRequestModel saveCustomerRequestModel);
-    EditCustomerResponse editCustomer(EditCustomerRequestModel editCustomerRequestModel);
+    EditCustomerResponse editCustomer(SaveCustomerRequestModel editCustomerRequestModel);
 
 }
