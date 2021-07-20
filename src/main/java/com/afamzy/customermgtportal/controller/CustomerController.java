@@ -24,4 +24,10 @@ public class CustomerController {
         return ResponseEntity.ok(saveResponse);
     }
 
+    @PostMapping("/edit")
+    public ResponseEntity<EditCustomerResponse> editCustomer(@RequestBody SaveCustomerRequestModel edit){
+        EditCustomerResponse response = customerDao.editCustomer(edit);
+        return ResponseEntity.ok(response);
+    }
+
 }

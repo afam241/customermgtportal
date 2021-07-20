@@ -119,35 +119,87 @@ public class CustomerDaoImpl implements CustomerDao {
         return response;
     }
 
-/*
-    public static DataSource cardOracleDataSource(){
-        OracleDataSource ds = null;
-        try {
-            ds = new OracleDataSource();
-            ds.setURL("jdbc:oracle:thin:@//localhost:1521/xe");  //connection URL info obtained from database schema properties
-            ds.setUser("system");
-            ds.setPassword("afam");
-        }catch (Exception e){
-            e.printStackTrace();
+    @Override
+    public DeleteCustomerResponse deleteCustomer(String deleteCustomer) {
+
+        logger.info("Customer to be deleted::: " + deleteCustomer);
+
+        Connection connection = null;
+        CallableStatement callableStatement = null;
+        DeleteCustomerResponse response = new DeleteCustomerResponse();
+
+        try{
+            connection = dataSource.getConnection();
+            //connection = cardOracleDataSource().getConnection();
+            String query = "call CUS_MGT_PORTAL.proc_delete_customer(?,?,?)";
+            callableStatement = connection.prepareCall(query);
+            callableStatement.setString(1,deleteCustomer);
+            callableStatement.registerOutParameter(2,Types.VARCHAR);
+            callableStatement.registerOutParameter(3,Types.VARCHAR);
+            callableStatement.execute();
+
+            response.setResponseCode(callableStatement.getString(2));
+            response.setResponseMessage(callableStatement.getString(3));
+
+        }catch (Exception exception){
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+        }finally {
+            if(connection != null){
+                try {
+                    connection.close();
+                }catch (Exception exception){
+                    exception.printStackTrace();
+                }
+            }
+            if (callableStatement != null){
+                try {
+                    callableStatement.close();
+                }catch (Exception exception){
+                    exception.printStackTrace();
+                }
+            }
         }
-        return ds;
+
+        //logger.info("Response code::: " + response);
+        return response;
     }
 
-*//*
-        //Test for editing customer
-    public static void main(String[] args) {
-        CustomerDaoImpl customerDao = new CustomerDaoImpl();
-        SaveCustomerRequestModel edit2 = new SaveCustomerRequestModel("Akeemii","6r5dcf","543edx","87ygtf",4556.23);
+//    public static DataSource cardOracleDataSource(){
+//        OracleDataSource ds = null;
+//        try {
+//            ds = new OracleDataSource();
+//            ds.setURL("jdbc:oracle:thin:@//localhost:1521/xe");  //connection URL info obtained from database schema properties
+//            ds.setUser("system");
+//            ds.setPassword("afam");
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//        return ds;
+//    }
 
-        EditCustomerResponse edit = customerDao.editCustomer(edit2);
-        System.out.println("Response::: " + edit.getResponseCode() + " Message::: " + edit.getResponseMessage());
-    }
-
-    *//*
 
 
+//        //Test for editing customer
+//    public static void main(String[] args) {
+//        CustomerDaoImpl customerDao = new CustomerDaoImpl();
+//        SaveCustomerRequestModel edit2 = new SaveCustomerRequestModel("Akeemii","6r5dcf","543edx","87ygtf",4556.23);
+//
+//        EditCustomerResponse edit = customerDao.editCustomer(edit2);
+//        System.out.println("Response::: " + edit.getResponseCode() + " Message::: " + edit.getResponseMessage());
+//    }
+//
+//
 
-    */
+//        //Test for deleting customer
+//    public static void main(String[] args) {
+//        CustomerDaoImpl customerDao = new CustomerDaoImpl();
+//        String delete = "null7";
+//        DeleteCustomerResponse deleteResponse = customerDao.deleteCustomer(delete);
+//        System.out.println("Response code::: " + deleteResponse.getResponseCode() + " Response Message ::: " + deleteResponse.getResponseMessage());
+//    }
+//
+
 }
 
 
