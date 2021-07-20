@@ -1,6 +1,6 @@
 package com.afamzy.customermgtportal.model;
 
-public class DeleteCustomerRequestModel {
+public class OneCustomerRequestModel {
     private String customerName;
 
     @Override

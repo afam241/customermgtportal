@@ -120,7 +120,7 @@ public class CustomerDaoImpl implements CustomerDao {
     }
 
     @Override
-    public DeleteCustomerResponse deleteCustomer(DeleteCustomerRequestModel deleteCustomer) {
+    public DeleteCustomerResponse deleteCustomer(OneCustomerRequestModel deleteCustomer) {
 
         logger.info("Customer to be deleted::: " + deleteCustomer);
 

@@ -12,6 +12,7 @@ public interface CustomerDao {
 
     SaveCustomerResponse saveCustomer(SaveCustomerRequestModel saveCustomerRequestModel);
     EditCustomerResponse editCustomer(SaveCustomerRequestModel editCustomerRequestModel);
-    DeleteCustomerResponse deleteCustomer(DeleteCustomerRequestModel deleteCustomer);
+    DeleteCustomerResponse deleteCustomer(OneCustomerRequestModel deleteCustomer);
+    //Find1CustomerResponse find1Customer()
 
 }
