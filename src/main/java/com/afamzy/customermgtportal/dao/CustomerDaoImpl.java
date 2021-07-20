@@ -236,12 +236,79 @@ public class CustomerDaoImpl implements CustomerDao {
         return response;
     }
 
+    @Override
+    public FindAllCustomersResponse findAllCustomers() {
+
+        Connection connection = null;
+        CallableStatement callableStatement = null;
+        ResultSet resultSet = null;
+        FindAllCustomersResponse response = null;
+        List<CustomerModel> details = new ArrayList<>();
+        CustomerModel customerModel;
+
+        try {
+            connection = dataSource.getConnection();
+            //connection = cardOracleDataSource().getConnection();
+            String query = "call CUS_MGT_PORTAL.proc_show_all_customer(?,?,?)";
+            callableStatement = connection.prepareCall(query);
+            callableStatement.registerOutParameter(1,Types.VARCHAR);
+            callableStatement.registerOutParameter(2,Types.VARCHAR);
+            callableStatement.registerOutParameter(3,OracleTypes.CURSOR);
+            callableStatement.execute();
+
+            resultSet = (ResultSet) callableStatement.getObject(3);
+
+            while (resultSet.next()) {
+                customerModel = new CustomerModel();
+                customerModel.setCustomerName(resultSet.getString("CUSTOMER_NAME"));
+                customerModel.setPassword(resultSet.getString("PASSWORD"));
+                customerModel.setAddress(resultSet.getString("ADDRESS"));
+                customerModel.setDepartment(resultSet.getString("DEPARTMENT"));
+                customerModel.setNetWorth(resultSet.getDouble("NETWORTH"));
+                customerModel.setDateCreated(resultSet.getString("DATE_CREATED"));
+                customerModel.setDateModified(resultSet.getString("DATE_MODIFIED"));
+
+
+                details.add(customerModel);
+            }
+
+            response = new FindAllCustomersResponse();
+            response.setResponseCode(callableStatement.getString(1));
+            response.setResponseMessage(callableStatement.getString(2));
+            response.setCustomerModel(details);
+
+        }catch (Exception exception){
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+        }finally {
+            if(connection != null){
+                try {
+                    connection.close();
+                }catch (Exception exception){
+                    exception.printStackTrace();
+                }
+            }
+            if (callableStatement != null){
+                try {
+                    callableStatement.close();
+                }catch (Exception exception){
+                    exception.printStackTrace();
+                }
+            }
+        }
+
+        logger.info("Response::: " + response);
+
+        return response;
+    }
 
 
 
+/*
 
 
-    /*public static DataSource cardOracleDataSource(){
+
+    public static DataSource cardOracleDataSource(){
         OracleDataSource ds = null;
         try {
             ds = new OracleDataSource();
@@ -260,7 +327,7 @@ public class CustomerDaoImpl implements CustomerDao {
     public static void main(String[] args) {
 
         CustomerDaoImpl customerDao = new CustomerDaoImpl();
-        Find1CustomerResponse find1 = new Find1CustomerResponse();
+
 
         //Test for editing customer
 //        SaveCustomerRequestModel edit2 = new SaveCustomerRequestModel("Akeemii","6r5dcf","543edx","87ygtf",4556.23);
@@ -282,11 +349,13 @@ public class CustomerDaoImpl implements CustomerDao {
 //        Find1CustomerResponse find1Response = customerDao.find1Customer(name);
 
 
+//        //Test for all customer
+//        customerDao.findAllCustomers();
 
     }
 
-*/
 
+*/
 
 
 

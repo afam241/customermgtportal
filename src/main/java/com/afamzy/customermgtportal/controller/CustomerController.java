@@ -2,6 +2,7 @@ package com.afamzy.customermgtportal.controller;
 
 
 import com.afamzy.customermgtportal.dao.CustomerDao;
+import com.afamzy.customermgtportal.dao.FindAllCustomersResponse;
 import com.afamzy.customermgtportal.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,4 +45,9 @@ public class CustomerController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/findall")
+    public ResponseEntity<FindAllCustomersResponse> findAll(){
+        FindAllCustomersResponse response = customerDao.findAllCustomers();
+        return ResponseEntity.ok(response);
+    }
 }
