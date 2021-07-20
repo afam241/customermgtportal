@@ -37,4 +37,11 @@ public class CustomerController {
         return ResponseEntity.ok(response);
     }
 
+
+    @GetMapping("/find1customer")
+    public ResponseEntity<Find1CustomerResponse> find1Customer(@RequestBody OneCustomerRequestModel find1){
+        Find1CustomerResponse response = customerDao.find1Customer(find1);
+        return ResponseEntity.ok(response);
+    }
+
 }

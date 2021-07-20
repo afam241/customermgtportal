@@ -2,6 +2,7 @@ package com.afamzy.customermgtportal.dao;
 
 
 import com.afamzy.customermgtportal.model.*;
+import oracle.jdbc.OracleTypes;
 import oracle.jdbc.pool.OracleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.Types;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class CustomerDaoImpl implements CustomerDao {
@@ -165,40 +166,130 @@ public class CustomerDaoImpl implements CustomerDao {
         return response;
     }
 
-//    public static DataSource cardOracleDataSource(){
-//        OracleDataSource ds = null;
-//        try {
-//            ds = new OracleDataSource();
-//            ds.setURL("jdbc:oracle:thin:@//localhost:1521/xe");  //connection URL info obtained from database schema properties
-//            ds.setUser("system");
-//            ds.setPassword("afam");
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
-//        return ds;
-//    }
+    @Override
+    public Find1CustomerResponse find1Customer(OneCustomerRequestModel find1customerModel) {
+
+        logger.info("Request name to find:::: " + find1customerModel);
+
+        Connection connection = null;
+        CallableStatement callableStatement = null;
+        ResultSet resultSet = null;
+        Find1CustomerResponse response = null;
+        CustomerModel customerModel;
+        List <CustomerModel> details = new ArrayList<>();
+
+        try {
+            connection = dataSource.getConnection();
+            //connection = cardOracleDataSource().getConnection();
+            String query = "call CUS_MGT_PORTAL.proc_findonecustomer_by_name(?,?,?,?)";
+            callableStatement = connection.prepareCall(query);
+            callableStatement.setString(1,find1customerModel.getCustomerName());
+            callableStatement.registerOutParameter(2,Types.VARCHAR);
+            callableStatement.registerOutParameter(3,Types.VARCHAR);
+            callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
+            callableStatement.execute();
+
+            resultSet = (ResultSet) callableStatement.getObject(4);
+
+            while (resultSet.next()){
+                customerModel = new CustomerModel();
+                customerModel.setCustomerName(resultSet.getString("CUSTOMER_NAME"));
+                customerModel.setPassword(resultSet.getString("PASSWORD"));
+                customerModel.setAddress(resultSet.getString("ADDRESS"));
+                customerModel.setDepartment(resultSet.getString("DEPARTMENT"));
+                customerModel.setNetWorth(resultSet.getDouble("NETWORTH"));
+                customerModel.setDateCreated(resultSet.getString("DATE_CREATED"));
+                customerModel.setDateModified(resultSet.getString("DATE_MODIFIED"));
+
+
+                details.add(customerModel);
+                //logger.info("Details of customer found::: " + details);
+            }
+
+            response = new Find1CustomerResponse();
+            response.setResponseCode(callableStatement.getString(2));
+            response.setResponseMessage(callableStatement.getString(3));
+            response.setCustomerModel(details);
+
+
+        }catch (Exception exception){
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+        }finally {
+            if(connection != null){
+                try {
+                    connection.close();
+                }catch (Exception exception){
+                    exception.printStackTrace();
+                }
+            }
+            if (callableStatement != null){
+                try {
+                    callableStatement.close();
+                }catch (Exception exception){
+                    exception.printStackTrace();
+                }
+            }
+        }
+
+        logger.info("Response::: " + response);
+        return response;
+    }
 
 
 
-//        //Test for editing customer
-//    public static void main(String[] args) {
-//        CustomerDaoImpl customerDao = new CustomerDaoImpl();
+
+
+
+    /*public static DataSource cardOracleDataSource(){
+        OracleDataSource ds = null;
+        try {
+            ds = new OracleDataSource();
+            ds.setURL("jdbc:oracle:thin:@//localhost:1521/xe");  //connection URL info obtained from database schema properties
+            ds.setUser("system");
+            ds.setPassword("afam");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return ds;
+    }
+
+
+
+
+    public static void main(String[] args) {
+
+        CustomerDaoImpl customerDao = new CustomerDaoImpl();
+        Find1CustomerResponse find1 = new Find1CustomerResponse();
+
+        //Test for editing customer
 //        SaveCustomerRequestModel edit2 = new SaveCustomerRequestModel("Akeemii","6r5dcf","543edx","87ygtf",4556.23);
 //
 //        EditCustomerResponse edit = customerDao.editCustomer(edit2);
 //        System.out.println("Response::: " + edit.getResponseCode() + " Message::: " + edit.getResponseMessage());
-//    }
-//
-//
 
-//        //Test for deleting customer
-//    public static void main(String[] args) {
-//        CustomerDaoImpl customerDao = new CustomerDaoImpl();
-//        String delete = "null7";
+
+        //Test for deleting customer
+
+//        OneCustomerRequestModel delete = new OneCustomerRequestModel("Akeem");
 //        DeleteCustomerResponse deleteResponse = customerDao.deleteCustomer(delete);
 //        System.out.println("Response code::: " + deleteResponse.getResponseCode() + " Response Message ::: " + deleteResponse.getResponseMessage());
-//    }
-//
+
+
+
+//        //Test for find 1 customer
+//        OneCustomerRequestModel name = new OneCustomerRequestModel("Fisayo");
+//        Find1CustomerResponse find1Response = customerDao.find1Customer(name);
+
+
+
+    }
+
+*/
+
+
+
+
 
 }
 
