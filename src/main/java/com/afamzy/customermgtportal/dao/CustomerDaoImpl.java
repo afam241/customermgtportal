@@ -120,7 +120,7 @@ public class CustomerDaoImpl implements CustomerDao {
     }
 
     @Override
-    public DeleteCustomerResponse deleteCustomer(String deleteCustomer) {
+    public DeleteCustomerResponse deleteCustomer(DeleteCustomerRequestModel deleteCustomer) {
 
         logger.info("Customer to be deleted::: " + deleteCustomer);
 
@@ -133,7 +133,7 @@ public class CustomerDaoImpl implements CustomerDao {
             //connection = cardOracleDataSource().getConnection();
             String query = "call CUS_MGT_PORTAL.proc_delete_customer(?,?,?)";
             callableStatement = connection.prepareCall(query);
-            callableStatement.setString(1,deleteCustomer);
+            callableStatement.setString(1,deleteCustomer.getCustomerName());
             callableStatement.registerOutParameter(2,Types.VARCHAR);
             callableStatement.registerOutParameter(3,Types.VARCHAR);
             callableStatement.execute();

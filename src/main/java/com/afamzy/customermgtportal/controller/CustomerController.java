@@ -30,4 +30,11 @@ public class CustomerController {
         return ResponseEntity.ok(response);
     }
 
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<DeleteCustomerResponse> deleteCustomer(@RequestBody DeleteCustomerRequestModel delete){
+        DeleteCustomerResponse response = customerDao.deleteCustomer(delete);
+        return ResponseEntity.ok(response);
+    }
+
 }
